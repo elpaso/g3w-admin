@@ -6,6 +6,7 @@ git:
 
 before_script:
 - docker-compose up -d
+- docker stats --no-stream
 - docker-compose exec g3w-suite sh -c "wait-for-it -h localhost -p 8000 -t 180"
 
 script:
