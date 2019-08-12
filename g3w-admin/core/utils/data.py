@@ -1,7 +1,9 @@
 from django.utils.translation import ugettext, ugettext_lazy as _
 from .general import ucfirst
 import re
-
+import logging
+import traceback
+logger = logging.getLogger(__name__)
 
 class XmlData(object):
 
@@ -21,6 +23,7 @@ class XmlData(object):
             try:
                 setattr(self, data, getattr(self, '_getData{}'.format(ucfirst(data)))())
             except Exception as e:
+                logger.exception(e)
                 raise self._exceptionclass(_('[{} error on {}]-- {}')
                                            .format(self._pre_exception_message, data, e))
 

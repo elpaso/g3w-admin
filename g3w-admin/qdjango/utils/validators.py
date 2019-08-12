@@ -27,7 +27,7 @@ class QgisProjectValidator(QgisValidator):
 
 class IsGroupCompatibleValidator(QgisProjectValidator):
     """
-    Check il project is compatible with own group
+    Check if project is compatible with own group
     """
     def clean(self):
         if self.qgisProject.group.srid.srid != self.qgisProject.srid:
@@ -71,7 +71,7 @@ class UniqueLayername(QgisProjectValidator):
 
 class CheckMaxExtent(QgisProjectValidator):
     """
-    Check il WMSExtent is correct
+    Check if WMSExtent is correct
     """
     def clean(self):
         max_extent = self.qgisProject.maxExtent

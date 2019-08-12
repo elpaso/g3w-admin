@@ -54,15 +54,18 @@ def datasource2dict(datasource):
 
     # before get sql
     datasource, sql = datasource.split('sql=')
-    #datalist = datasource.split(' ')
 
-    keys = re.findall(r'([A-z][A-z0-9-_]+)=[\'"]?[#$^?+=!*()\'-/@%&\w\."]+[\'"]?', datasource)
+    keys = re.findall(r'([A-z][A-z0-9-_]+)=[\'"]?[#$^?+=!*()\'-/@%&\w\."]+[\'"]?', datasource, re.DOTALL)
     for k in keys:
         try:
-            datasourceDict[k] = re.findall(r'%s=([^"\'][#$^?+=!*()\'-/@%%&\w\.]+)' % k, datasource)[0]
+            datasourceDict[k] = re.findall(r'%s=([^"\'][#$^?+=!*()\'-/@%%&\w\.]+)' % k, datasource, re.DOTALL)[0]
         except:
-            # If I reincarnate as a human, I'll choose to be a farmer.
-            datasourceDict[k] = re.findall(r'%s=((?:["\'](?:(?:[^\"\']|\\\')+)["\'])(?:\.["\'](?:(?:[^\"\']|\\\')+)["\'])?)\s' % k, datasource)[0].strip('\'')
+            try:
+                # If I reincarnate as a human, I'll choose to be a farmer.
+                datasourceDict[k] = re.findall(r'%s=((?:["\'](?:(?:[^\"\']|\\\')+)["\'])(?:\.["\'](?:(?:[^\"\']|\\\')+)["\'])?)\s' % k, datasource, re.DOTALL)[0].strip('\'')
+            except IndexError:
+                # Is this a query layer?
+                datasourceDict[k] = re.findall(r'%s="(\(.*\))" \(geom\)' % k, datasource, re.DOTALL)[0].replace('\n', '')
 
     # add sql
     datasourceDict['sql'] = '{}'.format(unicode2ascii(sql))
