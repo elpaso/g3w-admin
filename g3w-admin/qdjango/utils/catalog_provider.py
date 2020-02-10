@@ -125,7 +125,7 @@ def catalog_provider(groups=[]):
                 #'operates_on_name': layer_metadata['operates_on_name'],  # Maps to pycsw:OperatesOnName
                 #'degree': layer_metadata['degree'],  # Maps to pycsw:Degree
                 # Maps to pycsw:AccessConstraints
-                'access_constraints': layer_metadata['accessconstraints'],
+                #'access_constraints': layer_metadata.get('accessconstraints', ''),
                 #'other_constraints': layer_metadata['other_constraints'],  # Maps to pycsw:OtherConstraints
                 #'classification': layer_metadata['classification'],  # Maps to pycsw:Classification
                 #'condition_applying_to_access_and_use': layer_metadata['condition_applying_to_access_and_use'],  # Maps to pycsw:ConditionApplyingToAccessAndUse
@@ -140,6 +140,19 @@ def catalog_provider(groups=[]):
                 #'relation': layer_metadata['relation'],  # Maps to pycsw:Relation
                 'links': "WMS,WMS Server,OGC:WMS,%s" % _get_url(project), # Maps to pycsw:Links - format: name,description,protocol,url
             }
+
+            keywords = []
+            # Project level free (not GEMET) keywords
+            project_keywords = layer_metadata.get('keywords', [])
+            if len(project_keywords) > 1:
+                keywords.extend(project_keywords[1:])
+
+            # Layer level free (not GEMET) keywords
+            layer_keywords = layer_metadata.get('metadata', dict()).get('keywords', [])
+            if len(layer_keywords) > 0:
+                keywords.extend(layer_keywords)
+
+            rec['project_keywords'] = ','.join(keywords)
 
             if not _is_raster(layer):
                 rec['links'] += "^WFS,WFS Server,OGC:WFS,%s" % _get_url(project)
